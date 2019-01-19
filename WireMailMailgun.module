@@ -19,9 +19,9 @@ class WireMailMailgun extends WireMail implements Module, ConfigurableModule
 	{
 		return array(
 			'title' => 'WireMail Mailgun',
-			'version' => '0.4.2',
+			'version' => '0.5.0',
 			'summary' => "Mailgun for ProcessWire",
-			'href' => 'https://github.com/plauclair/WireMailMailgun',
+			'href' => 'https://github.com/outflux3/WireMailMailgun',
 			'author' => 'plauclair',
 			'singular' => false,
 			'autoload' => false
@@ -177,10 +177,10 @@ class WireMailMailgun extends WireMail implements Module, ConfigurableModule
 	 * Handles send() when new WireMail() is used instead
 	 * of calling wireMail() directly
 	 */
-	public function send()
-	{
-		return $this->___send();
-	}
+	// public function send()
+	// {
+	// 	return $this->___send();
+	// }
 
 	/**
 	 * Overrides the Mailgun API Key setting in config
@@ -201,6 +201,11 @@ class WireMailMailgun extends WireMail implements Module, ConfigurableModule
 	{
 		$this->domain = $domainName;
 	}
+
+	private function getSenderDomainName() {
+		return substr(strrchr($this->mail['from'], "@"), 1);
+	}
+
 
 	/**
 	 * Overrides the Test Mode setting in config
