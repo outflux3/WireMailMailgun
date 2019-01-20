@@ -12,7 +12,7 @@ Usage is similar to the basic WireMail implementation, although a few extra opti
 
 Basic usage is as such:
 
-1. Initialize `$mail = WireMail();`
+1. Initialize `$mail = wireMail();` Note this also works: `$m = $mail->new();`
 2. Set options `$mail->to('Someone <someone@example.com>); ...`
 3. Send `$mail->send();`
 
