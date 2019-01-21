@@ -13,7 +13,7 @@ class WireMailMailgunConfig extends ModuleConfig
 				'description' => __('You can find your API Key [on Mailgun](https://mailgun.com/app/domains)'),
 				'required' => true,
 				'type' => 'Text',
-				'columnWidth' => 50
+				'columnWidth' => 100
 			),
 			array(
 				'name' => 'domain',
@@ -21,6 +21,14 @@ class WireMailMailgunConfig extends ModuleConfig
 				'description' => __('The domain name for this API key.'),
 				'required' => true,
 				'type' => 'Text',
+				'columnWidth' => 50
+			),
+			array(
+				'name' => 'dynamicDomain',
+				'label' => __('Use Dynamic Domains'),
+				'description' => __('Use email sender/from domain, ignore config setting.'),
+				'type' => 'Checkbox',
+				'value' => 'dynamicDomain',
 				'columnWidth' => 50
 			),
 			array(

@@ -106,7 +106,7 @@ class WireMailMailgun extends WireMail implements Module, ConfigurableModule
 
 		$options = array(
 			CURLOPT_USERPWD => "api:{$this->apiKey}",
-			CURLOPT_URL => "{$this->apiUrl}{$this->domain}/messages",
+			CURLOPT_URL => $this->apiUrl . $this->getDomainName() . "/messages",
 			CURLOPT_HEADER => false,
 			CURLOPT_POST => true,
 			CURLOPT_RETURNTRANSFER => true,
@@ -191,6 +191,19 @@ class WireMailMailgun extends WireMail implements Module, ConfigurableModule
 	{
 		$this->apiKey = $apiKey;
 	}
+
+	/**
+	 * 
+	 * 
+	 */
+	public function getDomainName() {
+		$domain = $this->domain;
+		if($this->dynamicDomain == 'dynamicDomain') {
+			$domain = $this->getSenderDomainName();
+		}
+		return $domain;
+	}
+	
 
 	/**
 	 * Overrides the Domain Name setting in config
