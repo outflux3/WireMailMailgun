@@ -13,7 +13,17 @@ class WireMailMailgunConfig extends ModuleConfig
 				'description' => __('You can find your API Key [on Mailgun](https://mailgun.com/app/domains)'),
 				'required' => true,
 				'type' => 'Text',
-				'columnWidth' => 100
+				'columnWidth' => 50
+			),
+			array(
+				'name' => 'region',
+				'label' => __('Region'),
+				'description' => __('The region for this API key.'),
+				'required' => true,
+				'type' => 'Radios',
+				'columnWidth' => 50,
+				'optionColumns' => 1,
+				'options' => ["us" => 'US', "eu" => 'EU']
 			),
 			array(
 				'name' => 'domain',

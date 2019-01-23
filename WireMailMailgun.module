@@ -6,11 +6,12 @@
  * @property string apiKey The API key set in config
  * @property string publicApiKey The public API key set in config
  * @property string domain The domain for the API key
+ * @property string region The region for the API key set in config
  * @property bool batchMode True by default. See setBatchMode() method of this class for more info.
  */
 class WireMailMailgun extends WireMail implements Module, ConfigurableModule
 {
-	private $apiUrl = 'https://api.mailgun.net/v3/';
+	private $apiUrl;
 	private $batchMode = true;
 	private $tags = [];
 	private $recipientsVariables = [];
@@ -19,13 +20,18 @@ class WireMailMailgun extends WireMail implements Module, ConfigurableModule
 	{
 		return array(
 			'title' => 'WireMail Mailgun',
-			'version' => '0.5.0',
+			'version' => '0.5.1',
 			'summary' => "Mailgun for ProcessWire",
 			'href' => 'https://github.com/outflux3/WireMailMailgun',
 			'author' => 'plauclair',
 			'singular' => false,
 			'autoload' => false
 		);
+	}
+
+	public function init() 
+	{
+		$this->setApiUrl($this->region);
 	}
 
 	/**
@@ -72,6 +78,11 @@ class WireMailMailgun extends WireMail implements Module, ConfigurableModule
 
 		// Email Click tracking
 		$postFields['o:tracking-opens'] = ($this->openTracking() === true) ? 'yes' : 'no';
+
+		// Email delivery time
+		if($this->deliveryTime) {
+			$postFields['o:deliverytime'] = $this->deliveryTime;
+		}
 
 		// Attachments
 		if ($this->getAttachments() !== false) {
@@ -172,16 +183,6 @@ class WireMailMailgun extends WireMail implements Module, ConfigurableModule
 		}
 	}
 
-
-	/**
-	 * Handles send() when new WireMail() is used instead
-	 * of calling wireMail() directly
-	 */
-	// public function send()
-	// {
-	// 	return $this->___send();
-	// }
-
 	/**
 	 * Overrides the Mailgun API Key setting in config
 	 *
@@ -192,11 +193,25 @@ class WireMailMailgun extends WireMail implements Module, ConfigurableModule
 		$this->apiKey = $apiKey;
 	}
 
+
 	/**
-	 * 
+	 * Overrides the Mailgun region setting in config
+	 *
+	 * @param string $region ('us' or 'eu');
+	 */
+	public function setApiUrl($region)
+	{
+		$this->apiUrl = ($region != 'us') ? "https://api.{$region}.mailgun.net/v3/" : 'https://api.mailgun.net/v3/';
+	}
+
+
+	/**
+	 * Get the API domain name based on config
+	 * Use config value, or dynamic value for the mail instance
 	 * 
 	 */
-	public function getDomainName() {
+	public function getDomainName() 
+	{
 		$domain = $this->domain;
 		if($this->dynamicDomain == 'dynamicDomain') {
 			$domain = $this->getSenderDomainName();
@@ -204,7 +219,6 @@ class WireMailMailgun extends WireMail implements Module, ConfigurableModule
 		return $domain;
 	}
 	
-
 	/**
 	 * Overrides the Domain Name setting in config
 	 *
@@ -218,7 +232,6 @@ class WireMailMailgun extends WireMail implements Module, ConfigurableModule
 	private function getSenderDomainName() {
 		return substr(strrchr($this->mail['from'], "@"), 1);
 	}
-
 
 	/**
 	 * Overrides the Test Mode setting in config
@@ -568,6 +581,22 @@ class WireMailMailgun extends WireMail implements Module, ConfigurableModule
 	{
 		return ($this->trackOpens == 'trackOpens') ? true : false;
 	}
+
+
+	/**
+	 * sets the delivery time
+	 * as RFC 2822 formatted date string at GMT time
+	 *
+	 * @param string $time
+	 */
+	public function setDeliveryTime($time)
+	{
+		$date = new DateTime($time, new DateTimeZone($this->config->timezone));
+		$date->setTimezone(new DateTimeZone('GMT'));
+		$gmtDate = $date->format('D, d M Y H:i:s e');
+		$this->deliveryTime = $gmtDate;
+	}
+
 
 	/**
 	 * Adds an attachment to the email using a file path
